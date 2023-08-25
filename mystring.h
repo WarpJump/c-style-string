@@ -1,34 +1,113 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*!
+\file
+\brief Header file of my string functions
+*/
+
+/*!
+\brief Default number of object to be allocated if no info specified
+*/
 static const size_t kDefaultAllocSize = 16;
 
-int MyPuts(const char* str);
+/*!
+\brief Prints null-terminated string in standart output
 
-char *MyStrchr(const char *str, int ch );
+\param str - string to be printed
 
-size_t MyStrlen( const char *str );
+\return return EOF if error occured in stdout, 0 otherwise
 
-char *MyStrcpy( char *dest, const char *src);
+Print every symbol of a string as if putc()
+*/
 
-char *MyStrncpy( char *dest, const char *src, size_t count );
+int MyPuts(const char *str);
 
-char *MyStrcat( char *dest, const char *src );
+/*!
+\brief Finds first occurance of char in given string
 
-char *MyStrncat( char *dest, const char *src, size_t count );
+\param str - string to be examined
+\param ch - symbol to be founded
 
-char* MyFgets(char* str, int count, FILE* stream);
+\return return ns pointer to the first occurance
 
-char* MyStrdup(const char* src);
+*/
 
-ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter, FILE *stream);
+char *MyStrchr(const char *str, int ch);
 
-ssize_t MyGetline(char **lineptr, size_t *capacity, FILE* stream);
+size_t MyStrlen(const char *str);
 
-char *MyStrstr( const char *str, const char *substr );
+/*!
+\brief Copyes one string to the beginning of another
 
-void PrefixFunction(const char *string, size_t *previous_prefix_postfix, size_t n);
+Copies the null-terminated byte string pointed to by src, including the null
+terminator, to the character array whose first element is pointed to by dest.
 
+\param dest - target. Rointer to the character array to write to
+\param src - source. Pointer to the null-terminated byte string to copy from
+*/
 
-bool AreStrMatches(const char* first, const char* second);
+char *MyStrcpy(char *dest, const char *src);
 
+/*!
+\brief Copyes at most count elements from one string to beginning of another
+\param dest - target. Pointer to the character array to copy to
+\param src - source. Pointer to the character array to copy from
+\param count - max number of copyed chars
+
+) Copies at most count characters of the character array pointed to by src
+(including the terminating null character, but not any of the characters that
+follow the null character) to character array pointed to by dest.
+*/
+
+char *MyStrncpy(char *dest, const char *src, size_t count);
+
+/*!
+\brief Concatenates one string to the end of another
+
+\param src - source of chars to be copied
+\param dest - target. First char from source will be copyed to the first
+occurance of null terminator
+*/
+
+char *MyStrcat(char *dest, const char *src);
+
+/*!
+\brief Concatenates a certain amount of characters of one strings to the end of
+another
+
+*/
+
+char *MyStrncat(char *dest, const char *src, size_t count);
+
+char *MyFgets(char *str, int count, FILE *stream);
+
+char *MyStrdup(const char *src);
+
+ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
+                   FILE *stream);
+
+ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream);
+
+// Knuth–Morris–Pratt algorithm
+/*!
+\brief Finds first occurance of substring in string.
+\param str - pointer to the null-terminated string to examine.
+\param substr - pointer to the null-terminated string to search for.
+
+\return Pointer to the first character of the found substring in str, or a null
+pointer if such substring is not found. If substr points to an empty string, str
+is returned.
+
+Finds the first occurrence of the null-terminated byte string pointed to by
+substr in the null-terminated byte string pointed to by str. The terminating
+null characters are not compared.
+
+*/
+
+char *MyStrstr(const char *str, const char *substr);
+
+void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
+                    size_t n);
+
+bool AreStrMatches(const char *first, const char *second);

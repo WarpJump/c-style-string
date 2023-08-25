@@ -2,15 +2,18 @@
 // my_fgets my_strdup my_getline
 
 #include "mystring.h"
+
 #include <assert.h>
 #include <stdlib.h>
 
 int MyPuts(const char *str) {
   int ret_value = 0;
+
   while ((*str != '\0') && (ret_value != EOF)) {
     ret_value = putchar(*str);
     ++str;
   }
+
   if (ret_value == EOF) {
     return EOF;
   }
@@ -97,6 +100,7 @@ char *MyFgets(char *str, int count, FILE *stream) {
     ++str;
     ++copyed;
   }
+
   if (letter == EOF) {
     return nullptr;
   }
@@ -111,6 +115,7 @@ char *MyFgets(char *str, int count, FILE *stream) {
 
 char *MyStrdup(const char *src) {
   const size_t kSize = MyStrlen(src);
+  assert(kSize != 0);
   char *duplicate = reinterpret_cast<char *>(calloc(kSize, sizeof(char)));
   MyStrcpy(duplicate, src);
   return duplicate;
@@ -137,6 +142,7 @@ ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
     *(*lineptr + stored) = letter;
     ++stored;
   }
+
   *(*lineptr + stored) = delimiter;
   *(*lineptr + stored + 1) = '\0';
 
@@ -149,8 +155,9 @@ ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream) {
 
 void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
                     size_t n) {
-  previous_prefix_postfix[0] = 0;  // array of a longest prefixes which are also
-                                   // suffixes of a substr length str_proposal
+  previous_prefix_postfix[0] =
+      0;  // dynamic-programming array of a longest prefixes which are also
+          // suffixes of a substr[0 ... i]
   for (size_t str_proposal = 1; str_proposal < n; ++str_proposal) {
     char edge = string[str_proposal];
     size_t postfix_len = previous_prefix_postfix[str_proposal - 1];
@@ -161,20 +168,90 @@ void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
     if (edge == string[postfix_len]) {
       postfix_len += 1;
     }
+
     previous_prefix_postfix[str_proposal] = postfix_len;
   }
 }
 
+bool Gocheck() { return true; }
+
+bool CompareStrings(char *longest, char *shortest, size_t n) {
+  for (size_t i = 0; i <= n; ++i) {
+    if (*shortest == '\0') {
+      return true;
+    }
+    if (*shortest != *longest) {
+      return false;
+    }
+    ++shortest;
+    ++longest;
+  }
+  return true;
+}
+
 char *MyStrstr(const char *str, const char *substr) {
+  char *str_proposal = const_cast<char *>(str);
+
+  static const size_t kBase = 263;
+  static const size_t kPrimeNumber = 1073676287;
+  // static const size_t kPrimeNumber = 4611686018427387904;
+
+  size_t substr_hash = 0;
+  size_t str_hash = 0;
+  size_t length = 0;
+
+  size_t max_base = 1;
+
+  while (substr[length] != '\0') {
+    substr_hash = substr_hash * kBase % kPrimeNumber + substr[length];
+    substr_hash %= kPrimeNumber;
+
+    str_hash = str_hash * kBase % kPrimeNumber + str[length];
+    str_hash %= kPrimeNumber;
+
+    ++length;
+  }
+  for (int i = 1; i < length; ++i) {
+    max_base *= kBase;
+    max_base %= kPrimeNumber;
+  }
+
+  str_proposal += length;
+
+  int count = 0;
+  while (*str_proposal != '\0') {
+    if (str_hash == substr_hash) {
+      if (CompareStrings(str_proposal - length, const_cast<char *>(substr),
+                          length)) {
+        return str_proposal - length;
+      }
+    } else {
+      str_hash += kPrimeNumber;
+      str_hash -= ((*(str_proposal - length)) * max_base % kPrimeNumber);
+      str_hash %= kPrimeNumber;
+
+      str_hash = str_hash * kBase % kPrimeNumber;
+      str_hash = (str_hash + *str_proposal) % kPrimeNumber;
+    }
+    ++str_proposal;
+    ++count;
+  }
+  return nullptr;
+}
+
+/*char *MyStrstr(const char *str, const char *substr) {
   size_t str_len = MyStrlen(str);
-  if(str_len == 0){
+  if (str_len == 0) {
     return nullptr;
   }
-  size_t *prefixes = reinterpret_cast<size_t *>(calloc(str_len, sizeof(size_t)));
+
+  size_t *prefixes =
+      reinterpret_cast<size_t *>(calloc(str_len, sizeof(size_t)));
   PrefixFunction(substr, prefixes, str_len);
   size_t str_proposal = 0;
   size_t eq_completed = 0;
   size_t substr_proposal = 0;
+
   while (str[str_proposal] != '\0') {
     while (str[str_proposal + eq_completed] == substr[substr_proposal]) {
       ++eq_completed;
@@ -191,7 +268,7 @@ char *MyStrstr(const char *str, const char *substr) {
   free(prefixes);
 
   return nullptr;
-}
+}*/
 
 /*char *my_strstr(const char *str, const char *substr) {
   char *orig_begin = const_cast<char *>(str);
