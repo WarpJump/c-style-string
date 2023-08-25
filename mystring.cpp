@@ -153,11 +153,11 @@ ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream) {
   return MyGetdelim(lineptr, capacity, '\n', stream);
 }
 
+// requared for Knuth–Morris–Pratt algorithm
+
 void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
                     size_t n) {
-  previous_prefix_postfix[0] =
-      0;  // dynamic-programming array of a longest prefixes which are also
-          // suffixes of a substr[0 ... i]
+  previous_prefix_postfix[0] = 0;
   for (size_t str_proposal = 1; str_proposal < n; ++str_proposal) {
     char edge = string[str_proposal];
     size_t postfix_len = previous_prefix_postfix[str_proposal - 1];
@@ -173,8 +173,6 @@ void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
   }
 }
 
-bool Gocheck() { return true; }
-
 bool CompareStrings(char *longest, char *shortest, size_t n) {
   for (size_t i = 0; i <= n; ++i) {
     if (*shortest == '\0') {
@@ -188,6 +186,8 @@ bool CompareStrings(char *longest, char *shortest, size_t n) {
   }
   return true;
 }
+
+// hash-function implementation
 
 char *MyStrstr(const char *str, const char *substr) {
   char *str_proposal = const_cast<char *>(str);
@@ -203,18 +203,25 @@ char *MyStrstr(const char *str, const char *substr) {
   size_t max_base = 1;
 
   while (substr[length] != '\0') {
+    //calculating hash value for substring
     substr_hash = substr_hash * kBase % kPrimeNumber + substr[length];
     substr_hash %= kPrimeNumber;
+
+    //calculating hash value for first strlen(substring) chars of main string
 
     str_hash = str_hash * kBase % kPrimeNumber + str[length];
     str_hash %= kPrimeNumber;
 
     ++length;
   }
+
+  // highest digit of the number in base = kBase notation
   for (int i = 1; i < length; ++i) {
     max_base *= kBase;
     max_base %= kPrimeNumber;
   }
+
+  // pointer to first not hashed char of main string
 
   str_proposal += length;
 
@@ -222,7 +229,7 @@ char *MyStrstr(const char *str, const char *substr) {
   while (*str_proposal != '\0') {
     if (str_hash == substr_hash) {
       if (CompareStrings(str_proposal - length, const_cast<char *>(substr),
-                          length)) {
+                         length)) {
         return str_proposal - length;
       }
     } else {
@@ -238,6 +245,8 @@ char *MyStrstr(const char *str, const char *substr) {
   }
   return nullptr;
 }
+
+// Knuth–Morris–Pratt algorithm
 
 /*char *MyStrstr(const char *str, const char *substr) {
   size_t str_len = MyStrlen(str);
@@ -269,6 +278,8 @@ char *MyStrstr(const char *str, const char *substr) {
 
   return nullptr;
 }*/
+
+// naive O(n^2) algorythm
 
 /*char *my_strstr(const char *str, const char *substr) {
   char *orig_begin = const_cast<char *>(str);

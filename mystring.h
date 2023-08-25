@@ -75,7 +75,6 @@ char *MyStrcat(char *dest, const char *src);
 /*!
 \brief Concatenates a certain amount of characters of one strings to the end of
 another
-
 */
 
 char *MyStrncat(char *dest, const char *src, size_t count);
@@ -89,7 +88,6 @@ ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
 
 ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream);
 
-// Knuth–Morris–Pratt algorithm
 /*!
 \brief Finds first occurance of substring in string.
 \param str - pointer to the null-terminated string to examine.
@@ -107,7 +105,19 @@ null characters are not compared.
 
 char *MyStrstr(const char *str, const char *substr);
 
+/*!
+\brief Prefix function requared for knutt-moris-pratt algorythm
+\param string - string where to search refixes and postfixes
+\param previous_prefix_postfix - array where at i-th position stored length of
+longest prefix and postfix of string
+\param n - length of string 'string'
+*/
+
 void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
                     size_t n);
 
+/*!
+ \brief Function that compares two strings.
+ Needed for testing
+*/
 bool AreStrMatches(const char *first, const char *second);
