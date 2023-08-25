@@ -70,6 +70,19 @@ void TestDynamicCopy() {
   free(dynamical);
 }
 
+void TestDynamicLine(){
+    FILE* testfile = fopen("test.txt", "r");
+    char* line = reinterpret_cast<char*>(calloc(10, sizeof(char)));
+    size_t buffer = 10;
+    getline(&line, &buffer, testfile);
+
+    const char kExample6[16] = "songus amongus\n";
+    assert(strlen(line) == strlen(kExample6));
+    assert(AreStrMatches(line, kExample6));
+
+    free(line);
+}
+
 int main() {
   TestLength();
 
@@ -80,6 +93,8 @@ int main() {
   TestFileRead();
 
   TestDynamicCopy();
+
+  TestDynamicLine();
 
   printf("test ok\n");
 }
