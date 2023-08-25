@@ -3,29 +3,31 @@
 
 static const size_t kDefaultAllocSize = 16;
 
-int my_puts(const char* str);
+int MyPuts(const char* str);
 
-char *my_strchr(const char *str, int ch );
+char *MyStrchr(const char *str, int ch );
 
-size_t my_strlen( const char *str );
+size_t MyStrlen( const char *str );
 
-char *my_strcpy( char *dest, const char *src);
+char *MyStrcpy( char *dest, const char *src);
 
-char *my_strncpy( char *dest, const char *src, size_t count );
+char *MyStrncpy( char *dest, const char *src, size_t count );
 
-char *my_strcat( char *dest, const char *src );
+char *MyStrcat( char *dest, const char *src );
 
-char *my_strncat( char *dest, const char *src, size_t count );
+char *MyStrncat( char *dest, const char *src, size_t count );
 
-char* fgets(char* str, int count, FILE* stream);
+char* MyFgets(char* str, int count, FILE* stream);
 
-char* my_strdup(const char* src);
+char* MyStrdup(const char* src);
 
-ssize_t my_getdelim(char **lineptr, size_t *capacity, int delimiter, FILE *stream);
+ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter, FILE *stream);
 
-ssize_t my_getline(char **lineptr, size_t *capacity, FILE* stream);
+ssize_t MyGetline(char **lineptr, size_t *capacity, FILE* stream);
 
-char *my_strstr( const char *str, const char *substr );
+char *MyStrstr( const char *str, const char *substr );
+
+void PrefixFunction(const char *string, size_t *previous_prefix_postfix, size_t n);
 
 
 bool AreStrMatches(const char* first, const char* second);
