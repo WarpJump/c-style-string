@@ -88,6 +88,15 @@ void TestDynamicLine(){
     free(line);
 }
 
+void   TestSTRSTR(){
+    char example[20] = "qjbejbjEBJVBEWJVNKW";
+    char substr[5] = "BJVB";
+    char* match = my_strstr(example, substr);
+    assert(match != nullptr);
+    printf("%d\n", match - example);
+
+}
+
 
 // strstr
 // 
@@ -103,6 +112,8 @@ int main() {
   TestDynamicCopy();
 
   TestDynamicLine();
+
+  TestSTRSTR();
 
   printf("test ok\n");
 }

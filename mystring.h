@@ -25,5 +25,8 @@ ssize_t my_getdelim(char **lineptr, size_t *capacity, int delimiter, FILE *strea
 
 ssize_t my_getline(char **lineptr, size_t *capacity, FILE* stream);
 
+char *my_strstr( const char *str, const char *substr );
+
+
 bool AreStrMatches(const char* first, const char* second);
 

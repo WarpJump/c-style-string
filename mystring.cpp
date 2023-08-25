@@ -1,10 +1,10 @@
-// TODO my_my_puts my_strchr my_strlen my_strcpy my_strncpy my_strcat my_strncat fgets my_strdup my_getline
+// TODO my_puts my_strchr my_strlen my_strcpy my_strncpy my_strcat my_strncat fgets my_strdup my_getline
 
 #include "mystring.h"
 
 #include <stdlib.h>
 
-int my_my_puts(const char *str) {
+int my_puts(const char *str) {
   int ret_value = 0;
   while ((*str != '\0') && (ret_value != EOF)) {
     ret_value = putchar(*str);
@@ -144,6 +144,31 @@ ssize_t my_getdelim(char **lineptr, size_t *capacity, int delimiter, FILE *strea
 
 ssize_t my_getline(char **lineptr, size_t *capacity, FILE *stream) {
   return my_getdelim(lineptr, capacity, '\n', stream);
+}
+
+char *my_strstr( const char *str, const char *substr ){
+    char* orig_begin = const_cast<char*> (str);
+
+    while(*orig_begin != '\0'){
+        if(*orig_begin == *substr){
+            char* orig_runner = orig_begin;
+            char* substr_runner = const_cast<char*> (substr);
+            bool is_found = true;
+            while((*orig_runner != '\0') && (*substr_runner != '\0')){
+                if(*orig_runner != *substr_runner){
+                    is_found = false;
+                    break;
+                }
+                ++orig_runner;
+                ++substr_runner;
+            }
+            if(is_found && ((*orig_runner != '\0') || (*orig_runner == *substr_runner))){
+                return orig_begin;
+            }
+        }
+        ++orig_begin;
+    }
+    return nullptr;
 }
 
 bool AreStrMatches(const char *first, const char *second) {
