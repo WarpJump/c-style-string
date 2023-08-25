@@ -1,25 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
 
+static const size_t kDefaultAllocSize = 16;
 
-int puts(const char* str);
+int my_puts(const char* str);
 
-char *strchr(const char *str, int ch );
+char *my_strchr(const char *str, int ch );
 
-size_t strlen( const char *str );
+size_t my_strlen( const char *str );
 
-char *strcpy( char *dest, const char *src);
+char *my_strcpy( char *dest, const char *src);
 
-char *strncpy( char *dest, const char *src, size_t count );
+char *my_strncpy( char *dest, const char *src, size_t count );
 
-char *strcat( char *dest, const char *src );
+char *my_strcat( char *dest, const char *src );
 
-char *strncat( char *dest, const char *src, size_t count );
+char *my_strncat( char *dest, const char *src, size_t count );
 
 char* fgets(char* str, int count, FILE* stream);
 
-char* strdup(const char* src);
+char* my_strdup(const char* src);
 
-ssize_t getline(char **lineptr, size_t *n, FILE* stream);
+ssize_t my_getdelim(char **lineptr, size_t *capacity, int delimiter, FILE *stream);
+
+ssize_t my_getline(char **lineptr, size_t *capacity, FILE* stream);
 
 bool AreStrMatches(const char* first, const char* second);
 

@@ -1,10 +1,10 @@
-// TODO puts strchr strlen strcpy strncpy strcat strncat fgets strdup getline
+// TODO my_my_puts my_strchr my_strlen my_strcpy my_strncpy my_strcat my_strncat fgets my_strdup my_getline
 
 #include "mystring.h"
 
 #include <stdlib.h>
 
-int puts(const char *str) {
+int my_my_puts(const char *str) {
   int ret_value = 0;
   while ((*str != '\0') && (ret_value != EOF)) {
     ret_value = putchar(*str);
@@ -22,7 +22,7 @@ int puts(const char *str) {
 \descr finds the first occurance of ch
 */
 
-char *strchr(const char *str, int ch) {
+char *my_strchr(const char *str, int ch) {
   while (*str != ch && *str != '\0') {
     ++str;
   }
@@ -36,7 +36,7 @@ char *strchr(const char *str, int ch) {
     returns length of string without terminating character
 */
 
-size_t strlen(const char *str) {
+size_t my_strlen(const char *str) {
   size_t size = 0;
   char *current = const_cast<char *>(str);
   while (*current != '\0') {
@@ -45,7 +45,7 @@ size_t strlen(const char *str) {
   return static_cast<size_t>(current - str);
 }
 
-char *strcpy(char *dest, const char *src) {
+char *my_strcpy(char *dest, const char *src) {
   char *old_dest = dest;
   while (*src != '\0') {
     *dest = *src;
@@ -56,7 +56,7 @@ char *strcpy(char *dest, const char *src) {
   return old_dest;
 }
 
-char *strncpy(char *dest, const char *src, size_t count) {
+char *my_strncpy(char *dest, const char *src, size_t count) {
   char *old_dest = dest;
   size_t num_of_already_copied = 0;
   while ((*src != '\0') && (num_of_already_copied < count)) {
@@ -71,15 +71,15 @@ char *strncpy(char *dest, const char *src, size_t count) {
   return old_dest;
 }
 
-char *strcat(char *dest, const char *src) {
-  size_t dest_size = strlen(dest);
-  strcpy(dest + dest_size, src);
+char *my_strcat(char *dest, const char *src) {
+  size_t dest_size = my_strlen(dest);
+  my_strcpy(dest + dest_size, src);
   return dest;
 }
 
-char *strncat(char *dest, const char *src, size_t count) {
-  size_t dest_size = strlen(dest);
-  strncpy(dest + dest_size, src, count);
+char *my_strncat(char *dest, const char *src, size_t count) {
+  size_t dest_size = my_strlen(dest);
+  my_strncpy(dest + dest_size, src, count);
   return dest;
 }
 
@@ -109,28 +109,29 @@ char *fgets(char *str, int count, FILE *stream) {
   return old_str;
 }
 
-char *strdup(const char *src) {
-  const size_t kSize = strlen(src);
+char *my_strdup(const char *src) {
+  const size_t kSize = my_strlen(src);
   char *duplicate = reinterpret_cast<char *>(calloc(kSize, sizeof(char)));
-  strcpy(duplicate, src);
+  my_strcpy(duplicate, src);
   return duplicate;
 }
 
-ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream) {
+ssize_t my_getdelim(char **lineptr, size_t *capacity, int delimiter, FILE *stream) {
   char letter = '\n';
   size_t stored = 0;
   size_t buffer = 0;
 
   if (*lineptr == nullptr) {
-    *lineptr = reinterpret_cast<char *>(malloc(2));
-    buffer = 2;
-    n = &buffer;
+    buffer = kDefaultAllocSize;
+    *lineptr = reinterpret_cast<char *>(malloc(kDefaultAllocSize));
+    capacity = &buffer;
   }
 
   while ((letter = fgetc(stream)) != delimiter) {
-    if (stored + 1 > *n) {
-      *lineptr = reinterpret_cast<char *>(realloc(*lineptr, 2 * (stored + 1)));
-      *n = 2 * (stored + 1);
+    if (stored + 1 > *capacity) {
+      *capacity = 2 * (stored + 1); // TODO pass n to realloc, naming
+
+      *lineptr = reinterpret_cast<char *>(realloc(*lineptr, *capacity));
     }
     *(*lineptr + stored) = letter;
     ++stored;
@@ -141,8 +142,8 @@ ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream) {
   return stored;
 }
 
-ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
-  return getdelim(lineptr, n, '\n', stream);
+ssize_t my_getline(char **lineptr, size_t *capacity, FILE *stream) {
+  return my_getdelim(lineptr, capacity, '\n', stream);
 }
 
 bool AreStrMatches(const char *first, const char *second) {
