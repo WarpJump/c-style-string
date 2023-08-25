@@ -192,22 +192,24 @@ bool CompareStrings(char *longest, char *shortest, size_t n) {
 char *MyStrstr(const char *str, const char *substr) {
   char *str_proposal = const_cast<char *>(str);
 
+  // prime numbers for hash functions
   static const size_t kBase = 263;
   static const size_t kPrimeNumber = 1073676287;
-  // static const size_t kPrimeNumber = 4611686018427387904;
 
+  // hash value for substring
   size_t substr_hash = 0;
+  // hash value for {length} chars of main string
   size_t str_hash = 0;
   size_t length = 0;
 
   size_t max_base = 1;
 
   while (substr[length] != '\0') {
-    //calculating hash value for substring
+    // calculating hash value for substring
     substr_hash = substr_hash * kBase % kPrimeNumber + substr[length];
     substr_hash %= kPrimeNumber;
 
-    //calculating hash value for first strlen(substring) chars of main string
+    // calculating hash value for first strlen(substring) chars of main string
 
     str_hash = str_hash * kBase % kPrimeNumber + str[length];
     str_hash %= kPrimeNumber;
@@ -233,10 +235,14 @@ char *MyStrstr(const char *str, const char *substr) {
         return str_proposal - length;
       }
     } else {
+      // recalculating hash
+
+      // removing the oldest char from the end
       str_hash += kPrimeNumber;
       str_hash -= ((*(str_proposal - length)) * max_base % kPrimeNumber);
       str_hash %= kPrimeNumber;
 
+      // adding new char to the front
       str_hash = str_hash * kBase % kPrimeNumber;
       str_hash = (str_hash + *str_proposal) % kPrimeNumber;
     }

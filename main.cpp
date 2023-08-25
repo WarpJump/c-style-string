@@ -3,10 +3,9 @@
 
 #include "mystring.h"
 
-#define test(func)          \
-    ...                     \
-    if (my##func == func) { \
-        // test passed      \
+#define test(func)            \
+  ... if (my##func == func) { \
+    // test passed      \
     }
 
 void TestLength() {
@@ -24,13 +23,13 @@ void TestCopy() {
   char test1[8] = "red sus";
   MyStrcpy(test1, kExample1);
   assert(AreStrMatches(test1,
-                      kExample1));  // expected test1 = example1 = "amongus"
+                       kExample1));  // expected test1 = example1 = "amongus"
 
   const char kExample2[16] = "amongus amongus";
   char test2[16] = "song of amongus";
   MyStrncpy(test2, kExample1, 7);
   assert(AreStrMatches(test2,
-                      kExample2));  // expected test2 = "amongus amongus"
+                       kExample2));  // expected test2 = "amongus amongus"
 }
 
 void TestConcatenation() {
@@ -45,7 +44,7 @@ void TestConcatenation() {
   const char kExample4[20] = "red is amongus sus";
   MyStrncat(test3, " sus", 5);
   assert(AreStrMatches(test3,
-                      kExample4));  // expected test3 = "red is amongus rsus"
+                       kExample4));  // expected test3 = "red is amongus rsus"
 }
 
 void TestFileRead() {
@@ -75,28 +74,26 @@ void TestDynamicCopy() {
   free(dynamical);
 }
 
-void TestDynamicLine(){
-    FILE* testfile = fopen("test.txt", "r");
-    char* line = reinterpret_cast<char*>(calloc(10, sizeof(char)));
-    size_t buffer = 10;
-    MyGetline(&line, &buffer, testfile);
+void TestDynamicLine() {
+  FILE* testfile = fopen("test.txt", "r");
+  char* line = reinterpret_cast<char*>(calloc(10, sizeof(char)));
+  size_t buffer = 10;
+  MyGetline(&line, &buffer, testfile);
 
-    const char kExample6[16] = "songus amongus\n";
-    assert(MyStrlen(line) == MyStrlen(kExample6));
-    assert(AreStrMatches(line, kExample6));
+  const char kExample6[16] = "songus amongus\n";
+  assert(MyStrlen(line) == MyStrlen(kExample6));
+  assert(AreStrMatches(line, kExample6));
 
-    free(line);
+  free(line);
 }
 
-void   TestSTRSTR(){
-    char example[20] = "qjbejbjEBJVBEWJVNKW";
-    char substr[5] = "BJVB";
-    char* match = MyStrstr(example, substr);
-    assert(match != nullptr);
-    assert((match - example) == 8);
-
+void TestSTRSTR() {
+  char example[20] = "qjbejbjEBJVBEWJVNKW";
+  char substr[5] = "BJVB";
+  char* match = MyStrstr(example, substr);
+  assert(match != nullptr);
+  assert((match - example) == 8);
 }
-
 
 int main() {
   TestLength();
@@ -114,5 +111,4 @@ int main() {
   TestSTRSTR();
 
   printf("test ok\n");
-
 }
