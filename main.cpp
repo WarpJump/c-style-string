@@ -10,6 +10,10 @@
 \brief File with test functions for my c-string library
 */
 
+#ifndef NDEBUG
+FILE *debugfile = fopen("logs.txt", "w"); //ааа я не знаю как его закрыть!!!!
+#endif
+
 void TestLength() {
   const char kExample1[8] = "amongus";  // will not be modified
   assert(MyStrlen("cucumber") == strlen("cucumber"));
@@ -126,4 +130,8 @@ int main() {
   TestMyAsserts();
 
   printf("test ok\n");
+
+  #ifndef NDEBUG
+  fclose(debugfile);
+  #endif
 }

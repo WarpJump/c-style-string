@@ -15,7 +15,7 @@
 #include "myasserts.h"
 
 #ifndef NDEBUG
-FILE *debugfile = fopen("logs.txt", "w");
+extern FILE* debugfile;
 #endif
 
 int MyPuts(const char *str) {

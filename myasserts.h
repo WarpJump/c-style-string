@@ -17,7 +17,7 @@
 
 #define logfatal(error)                                              \
   printerror(errfile, RedText("!FATAL ERROR! ") MagentaText(error)); \
-  fclose(debugfile)
+  fclose(errfile)
 
 #define printfatal(error) \
   printerror(stderr, RedText("!FATAL ERROR! ") MagentaText(error));
