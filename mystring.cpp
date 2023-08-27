@@ -1,12 +1,26 @@
 // TODO my_puts my_strchr my_strlen my_strcpy my_strncpy my_strcat my_strncat
 // my_fgets my_strdup my_getline
 
+/*!
+\file
+\brief File with definition of smy c-string library
+*/
+
 #include "mystring.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
+#include "myasserts.h"
+
+#ifndef NDEBUG
+FILE *debugfile = fopen("logs.txt", "w");
+#endif
+
 int MyPuts(const char *str) {
+  ASSERT_POINTER_NOT_NULL(str, EOF);
+
   int ret_value = 0;
 
   while ((*str != '\0') && (ret_value != EOF)) {
@@ -21,11 +35,9 @@ int MyPuts(const char *str) {
   return 0;
 }
 
-/*!
-\descr finds the first occurance of ch
-*/
-
 char *MyStrchr(const char *str, int ch) {
+  ASSERT_POINTER_NOT_NULL(str, nullptr);
+
   while (*str != ch && *str != '\0') {
     ++str;
   }
@@ -35,11 +47,9 @@ char *MyStrchr(const char *str, int ch) {
   return nullptr;
 }
 
-/*!
-    returns length of string without terminating character
-*/
-
 size_t MyStrlen(const char *str) {
+  ASSERT_POINTER_NOT_NULL(str, 0);
+
   size_t size = 0;
   char *current = const_cast<char *>(str);
   while (*current != '\0') {
@@ -49,6 +59,10 @@ size_t MyStrlen(const char *str) {
 }
 
 char *MyStrcpy(char *dest, const char *src) {
+  ASSERT_POINTER_NOT_NULL(dest, nullptr);
+  ASSERT_POINTER_NOT_NULL(src, nullptr);
+  ASSERT_POINTERS_NOT_EQUAL(dest, src, nullptr);
+
   char *old_dest = dest;
   while (*src != '\0') {
     *dest = *src;
@@ -60,6 +74,10 @@ char *MyStrcpy(char *dest, const char *src) {
 }
 
 char *MyStrncpy(char *dest, const char *src, size_t count) {
+  ASSERT_POINTER_NOT_NULL(dest, nullptr);
+  ASSERT_POINTER_NOT_NULL(src, nullptr);
+  ASSERT_POINTERS_NOT_EQUAL(dest, src, nullptr);
+
   char *old_dest = dest;
   size_t num_of_already_copied = 0;
   while ((*src != '\0') && (num_of_already_copied < count)) {
@@ -75,22 +93,29 @@ char *MyStrncpy(char *dest, const char *src, size_t count) {
 }
 
 char *MyStrcat(char *dest, const char *src) {
+  ASSERT_POINTER_NOT_NULL(dest, nullptr);
+  ASSERT_POINTER_NOT_NULL(src, nullptr);
+  ASSERT_POINTERS_NOT_EQUAL(dest, src, nullptr);
+
   size_t dest_size = MyStrlen(dest);
   MyStrcpy(dest + dest_size, src);
   return dest;
 }
 
 char *MyStrncat(char *dest, const char *src, size_t count) {
+  ASSERT_POINTER_NOT_NULL(dest, nullptr);
+  ASSERT_POINTER_NOT_NULL(src, nullptr);
+  ASSERT_POINTERS_NOT_EQUAL(dest, src, nullptr);
+
   size_t dest_size = MyStrlen(dest);
   MyStrncpy(dest + dest_size, src, count);
   return dest;
 }
 
-/*!
-Reads at most count - 1 characters from the given file stream and stores them in
-the character array pointed to by str.*/
-
 char *MyFgets(char *str, int count, FILE *stream) {
+  ASSERT_POINTER_NOT_NULL(str, nullptr);
+  ASSERT_POINTER_NOT_NULL(stream, nullptr);
+
   char *old_str = str;
   int copyed = 1;
   char letter = '\n';
@@ -114,22 +139,28 @@ char *MyFgets(char *str, int count, FILE *stream) {
 }
 
 char *MyStrdup(const char *src) {
+  ASSERT_POINTER_NOT_NULL(src, nullptr);
+
   const size_t kSize = MyStrlen(src);
-  assert(kSize != 0);
+  ASSERT_ALLOCALION_SIZE_NOT_ZERO(kSize, nullptr);
   char *duplicate = reinterpret_cast<char *>(calloc(kSize, sizeof(char)));
   MyStrcpy(duplicate, src);
+
   return duplicate;
 }
 
 ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
                    FILE *stream) {
+  ASSERT_POINTER_NOT_NULL(stream, -1);
   char letter = '\n';
   size_t stored = 0;
   size_t buffer = 0;
 
   if (*lineptr == nullptr) {
     buffer = kDefaultAllocSize;
-    *lineptr = reinterpret_cast<char *>(malloc(kDefaultAllocSize));
+    *lineptr =
+        reinterpret_cast<char *>(calloc(kDefaultAllocSize, sizeof(char)));
+    ASSERT_POINTER_NOT_NULL(lineptr, -1);
     capacity = &buffer;
   }
 
@@ -138,6 +169,8 @@ ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
       *capacity = 2 * (stored + 1);
 
       *lineptr = reinterpret_cast<char *>(realloc(*lineptr, *capacity));
+      ASSERT_POINTER_NOT_NULL(lineptr, -1);
+
     }
     *(*lineptr + stored) = letter;
     ++stored;
@@ -153,27 +186,10 @@ ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream) {
   return MyGetdelim(lineptr, capacity, '\n', stream);
 }
 
-// requared for Knuth–Morris–Pratt algorithm
-
-void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
-                    size_t n) {
-  previous_prefix_postfix[0] = 0;
-  for (size_t str_proposal = 1; str_proposal < n; ++str_proposal) {
-    char edge = string[str_proposal];
-    size_t postfix_len = previous_prefix_postfix[str_proposal - 1];
-    while (postfix_len != 0 && (edge != string[postfix_len])) {
-      postfix_len = previous_prefix_postfix[postfix_len - 1];
-    }
-
-    if (edge == string[postfix_len]) {
-      postfix_len += 1;
-    }
-
-    previous_prefix_postfix[str_proposal] = postfix_len;
-  }
-}
-
 bool CompareStrings(char *longest, char *shortest, size_t n) {
+  ASSERT_POINTER_NOT_NULL(longest, false);
+  ASSERT_POINTER_NOT_NULL(shortest, false);
+
   for (size_t i = 0; i <= n; ++i) {
     if (*shortest == '\0') {
       return true;
@@ -187,9 +203,14 @@ bool CompareStrings(char *longest, char *shortest, size_t n) {
   return true;
 }
 
+// TODO Boyer-Moore
+
 // hash-function implementation
 
 char *MyStrstr(const char *str, const char *substr) {
+  ASSERT_POINTER_NOT_NULL(str, nullptr);
+  ASSERT_POINTER_NOT_NULL(substr, nullptr);
+  
   char *str_proposal = const_cast<char *>(str);
 
   // prime numbers for hash functions
@@ -250,6 +271,26 @@ char *MyStrstr(const char *str, const char *substr) {
     ++count;
   }
   return nullptr;
+}
+
+// requared for Knuth–Morris–Pratt algorithm
+
+void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
+                    size_t n) {
+  previous_prefix_postfix[0] = 0;
+  for (size_t str_proposal = 1; str_proposal < n; ++str_proposal) {
+    char edge = string[str_proposal];
+    size_t postfix_len = previous_prefix_postfix[str_proposal - 1];
+    while (postfix_len != 0 && (edge != string[postfix_len])) {
+      postfix_len = previous_prefix_postfix[postfix_len - 1];
+    }
+
+    if (edge == string[postfix_len]) {
+      postfix_len += 1;
+    }
+
+    previous_prefix_postfix[str_proposal] = postfix_len;
+  }
 }
 
 // Knuth–Morris–Pratt algorithm
@@ -314,6 +355,9 @@ char *MyStrstr(const char *str, const char *substr) {
 }*/
 
 bool AreStrMatches(const char *first, const char *second) {
+  assert(first != nullptr);
+  assert(second != nullptr);
+
   while (*first != '\0' && *second != '\0') {
     if (*first != *second) {
       return false;

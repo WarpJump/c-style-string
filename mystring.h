@@ -3,7 +3,7 @@
 
 /*!
 \file
-\brief Header file of my string functions
+\brief Header file with declarations of my string library
 */
 
 /*!
@@ -16,9 +16,11 @@ static const size_t kDefaultAllocSize = 16;
 
 \param str - string to be printed
 
-\return return EOF if error occured in stdout, 0 otherwise
+\return return EOF if given nullptr as pointer to string, or if error occured in
+stdout, 0 otherwise
 
 Print every symbol of a string as if putc()
+
 */
 
 int MyPuts(const char *str);
@@ -35,6 +37,10 @@ int MyPuts(const char *str);
 
 char *MyStrchr(const char *str, int ch);
 
+/*!
+    returns length of string without terminating character
+*/
+
 size_t MyStrlen(const char *str);
 
 /*!
@@ -45,6 +51,9 @@ terminator, to the character array whose first element is pointed to by dest.
 
 \param dest - target. Rointer to the character array to write to
 \param src - source. Pointer to the null-terminated byte string to copy from
+
+\return returns pointer to the dest in success, or nullptr in failure
+
 */
 
 char *MyStrcpy(char *dest, const char *src);
@@ -54,10 +63,9 @@ char *MyStrcpy(char *dest, const char *src);
 \param dest - target. Pointer to the character array to copy to
 \param src - source. Pointer to the character array to copy from
 \param count - max number of copyed chars
-
-) Copies at most count characters of the character array pointed to by src
-(including the terminating null character, but not any of the characters that
-follow the null character) to character array pointed to by dest.
+\return returns pointer to the dest in success, or nullptr in failure
+ Copies at most count characters of the character array pointed to by src,
+including null character
 */
 
 char *MyStrncpy(char *dest, const char *src, size_t count);
@@ -79,12 +87,34 @@ another
 
 char *MyStrncat(char *dest, const char *src, size_t count);
 
+/*!
+\brief Reads at most count - 1 characters from the given file stream and stores
+them in the character array pointed to by str. \return Return pointer to as
+tring on success, or nullptr in failure*/
+
 char *MyFgets(char *str, int count, FILE *stream);
 
 char *MyStrdup(const char *src);
 
+/*!
+\brief Reads from file unti; delimiter symbol occures and stores in string
+buffer pointed to by lineptr \param lineptr - pointer to a string of initial
+buffer or to a null pointer \param n - pointer to the size of the initial buffer
+\param delimiter - delimiter character
+\param stream - input stream, function return -1 if equal to nullptr
+
+\return size of the buffer if success, -1 otherwise
+*/
+
 ssize_t MyGetdelim(char **lineptr, size_t *capacity, int delimiter,
                    FILE *stream);
+
+/*!
+\brief Reads symbols from stream untin newline symbol occures as if
+getdelim(lineptr, n, '\n', stream)
+
+\return size of the buffer if success, -1 otherwise
+*/
 
 ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream);
 
@@ -93,14 +123,8 @@ ssize_t MyGetline(char **lineptr, size_t *capacity, FILE *stream);
 \param str - pointer to the null-terminated string to examine.
 \param substr - pointer to the null-terminated string to search for.
 
-\return Pointer to the first character of the found substring in str, or a null
-pointer if such substring is not found. If substr points to an empty string, str
-is returned.
-
-Finds the first occurrence of the null-terminated byte string pointed to by
-substr in the null-terminated byte string pointed to by str. The terminating
-null characters are not compared.
-
+\return Pointer to the first character of the found substring in str. Returns
+nullptr if errors orrured.
 */
 
 char *MyStrstr(const char *str, const char *substr);
@@ -117,7 +141,16 @@ void PrefixFunction(const char *string, size_t *previous_prefix_postfix,
                     size_t n);
 
 /*!
- \brief Function that compares two strings.
+ \brief Compares two strings until their null terminating symbol.
  Needed for testing
 */
+
 bool AreStrMatches(const char *first, const char *second);
+
+/*!
+\brief Compares first n symbols of two strings
+\return Returns false if first n symbols of strings not match or nullptr
+received, true otherwise
+*/
+
+bool CompareStrings(char *longest, char *shortest, size_t n);

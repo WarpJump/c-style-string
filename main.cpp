@@ -2,19 +2,20 @@
 #include <stdio.h>
 
 #include "mystring.h"
+#include "string.h"
 
-#define test(func)            \
-  ... if (my##func == func) { \
-    // test passed      \
-    }
+
+/*!
+\file
+\brief File with test functions for my c-string library
+*/
 
 void TestLength() {
   const char kExample1[8] = "amongus";  // will not be modified
-  assert(MyStrlen("cucumber") == 8);
-  assert(MyStrlen(kExample1) ==
-         7);  // because example1 has null terminator of its 8th element
+  assert(MyStrlen("cucumber") == strlen("cucumber"));
+  assert(MyStrlen(kExample1) == strlen(kExample1));
 
-  assert(MyStrchr(kExample1, 'n') - kExample1 == 3);
+  assert(MyStrchr(kExample1, 'n') == strchr(kExample1, 'n'));
 }
 
 void TestCopy() {
@@ -36,15 +37,23 @@ void TestConcatenation() {
   const char kExample1[8] = "amongus";
 
   char test3[20] = "red is not imposter";
+  char ans3[20] = "red is not imposter";
   const char kExample3[20] = "red is amongus";
   test3[7] = '\0';
+  ans3[7] = '\0';
+
+
   MyStrcat(test3, kExample1);
-  assert(AreStrMatches(test3, kExample3));  // expected test3 = "red is amongus"
+  strcat(ans3, kExample1);
+  assert(AreStrMatches(test3, ans3));  // expected test3 = "red is amongus"
 
   const char kExample4[20] = "red is amongus sus";
   MyStrncat(test3, " sus", 5);
+  strncat(ans3,  " sus", 5);
   assert(AreStrMatches(test3,
-                       kExample4));  // expected test3 = "red is amongus rsus"
+                       kExample4));
+  assert(AreStrMatches(test3,
+                       ans3));  // expected test3 = "red is amongus rsus"
 }
 
 void TestFileRead() {
@@ -76,13 +85,15 @@ void TestDynamicCopy() {
 
 void TestDynamicLine() {
   FILE* testfile = fopen("test.txt", "r");
-  char* line = reinterpret_cast<char*>(calloc(10, sizeof(char)));
   size_t buffer = 10;
+  char* line = reinterpret_cast<char*>(calloc(buffer, sizeof(char)));
   MyGetline(&line, &buffer, testfile);
 
   const char kExample6[16] = "songus amongus\n";
   assert(MyStrlen(line) == MyStrlen(kExample6));
   assert(AreStrMatches(line, kExample6));
+
+  fclose(testfile);
 
   free(line);
 }
@@ -94,6 +105,8 @@ void TestSTRSTR() {
   assert(match != nullptr);
   assert((match - example) == 8);
 }
+
+void TestMyAsserts() { MyPuts(nullptr); }
 
 int main() {
   TestLength();
@@ -109,6 +122,8 @@ int main() {
   TestDynamicLine();
 
   TestSTRSTR();
+
+  TestMyAsserts();
 
   printf("test ok\n");
 }
