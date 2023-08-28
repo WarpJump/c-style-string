@@ -1,0 +1,1 @@
+[93m*NONFATAL ERROR* [0m[35mASSERTION FAILED: NULL POINTER[0m in function "int MyPuts(const char*)" in line 27

@@ -34,6 +34,10 @@
 #define printwarning(error) \
   printerror(stderr, BlueText(".WARNING. ") MagentaText(error));
 
+#define TRASE_RET(value)    \
+  BackTracePop(backtrace); \
+  return value
+
 /*!
 \brief Exception controlling block.
 \param statement - boolian expression. If not true throws an error
@@ -84,14 +88,18 @@ test \param test_case_name - group of test name \param test_name - name of test
 #define ASSERT_POINTERS_NOT_EQUAL(...)
 #endif
 
+#define nullpointer "ASSERTION FAILED: NULL POINTER"
 #ifndef NDEBUG
-#define ASSERT_POINTER_NOT_NULL(ptr, value)            \
-  do {                                                 \
-    if (ptr == nullptr) {                              \
-      printnonfatal("ASSERTION FAILED: NULL POINTER"); \
-      lognonfatal("ASSERTION FAILED: NULL POINTER");   \
-      return value;                                    \
-    }                                                  \
+#define ASSERT_POINTER_NOT_NULL(ptr, value)   \
+  do {                                        \
+    if (ptr == nullptr) {                     \
+      printnonfatal(nullpointer);             \
+      lognonfatal(nullpointer);               \
+      AddMessage(backtrace, nullpointer, 31); \
+      PrintTrace(backtrace);                  \
+      BackTracePop(backtrace);\
+      TRASE_RET(value);                        \
+    }                                         \
   } while (0)
 #else
 #define ASSERT_POINTER_NOT_NULL(...)

@@ -4,6 +4,7 @@
 #include "mystring.h"
 #include "string.h"
 
+#include "mystack.h"
 
 /*!
 \file
@@ -13,6 +14,7 @@
 #ifndef NDEBUG
 FILE *debugfile = fopen("logs.txt", "w"); //ааа я не знаю как его закрыть!!!!
 #endif
+BACKTRACE* backtrace;
 
 void TestLength() {
   const char kExample1[8] = "amongus";  // will not be modified
@@ -112,7 +114,10 @@ void TestSTRSTR() {
 
 void TestMyAsserts() { MyPuts(nullptr); }
 
-int main() {
+int main() { // TODO move upper
+  backtrace =  BackTraceConstruct();
+
+
   TestLength();
 
   TestCopy();
@@ -126,10 +131,13 @@ int main() {
   TestDynamicLine();
 
   TestSTRSTR();
-
-  TestMyAsserts();
+  TRACE {
+    TestMyAsserts();
+  }
 
   printf("test ok\n");
+
+  BackTraceDestroy(backtrace);
 
   #ifndef NDEBUG
   fclose(debugfile);

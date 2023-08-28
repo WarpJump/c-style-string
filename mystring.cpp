@@ -7,32 +7,37 @@
 */
 
 #include "mystring.h"
+#include "myasserts.h"
+#include "mystack.h"
+
 
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "myasserts.h"
 
 #ifndef NDEBUG
 extern FILE* debugfile;
 #endif
+extern BACKTRACE* backtrace;
+
 
 int MyPuts(const char *str) {
-  ASSERT_POINTER_NOT_NULL(str, EOF);
-
-  int ret_value = 0;
-
-  while ((*str != '\0') && (ret_value != EOF)) {
-    ret_value = putchar(*str);
-    ++str;
+  TRACE {
+    ASSERT_POINTER_NOT_NULL(str, EOF);
   }
+    int ret_value = 0;
 
-  if (ret_value == EOF) {
-    return EOF;
-  }
-  putchar('\n');
-  return 0;
+    while ((*str != '\0') && (ret_value != EOF)) {
+      ret_value = putchar(*str);
+      ++str;
+    }
+
+    if (ret_value == EOF) {
+      return EOF;
+    }
+    putchar('\n');
+    return 0;
 }
 
 char *MyStrchr(const char *str, int ch) {
