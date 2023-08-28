@@ -4,6 +4,7 @@
 */
 
 #include "colors.h"
+#include "string.h"
 
 #ifndef NDEBUG
 #define errfile debugfile
@@ -11,9 +12,51 @@
 #define errfile stderr
 #endif
 
+#define PrintFunc                                           \
+  char filename[40] = "";                                   \
+  char funcname[40] = "";                                   \
+  size_t length;                                            \
+  strcat(filename, __FILE__);                               \
+  strcat(funcname, __func__);                               \
+                                                            \
+  FILE* sourcefile = fopen(filename, "r");                  \
+  char* func;                                               \
+  char* line = nullptr;                                     \
+  do {                                                      \
+    getline(&line, &length, sourcefile);                    \
+    func = strstr(line, funcname);                          \
+  } while (func == nullptr);                                \
+  char symbol##_FUNCION__;                                  \
+  int balance = 0;                                          \
+  for (int i = 0; line[i] != '\0'; ++i) {                   \
+    putchar(line[i]);                                       \
+    balance -= (line[i] == '}');                            \
+    balance += (line[i] == '{');                            \
+  }                                                         \
+  while ((symbol##_FUNCION__ = fgetc(sourcefile)) != '{') { \
+    putchar(symbol##_FUNCION__);                            \
+  }                                                         \
+  ++balance;                                                \
+  while (balance != 0) {                                    \
+    symbol##_FUNCION__ = fgetc(sourcefile);                 \
+    balance -= (symbol##_FUNCION__ == '}');                 \
+    balance += (symbol##_FUNCION__ == '{');                 \
+                                                            \
+    putchar(symbol##_FUNCION__);                            \
+  }                                                         \
+  putchar('\n');                                            \
+  fclose(sourcefile)
+
 #define printerror(file, message)                           \
   fprintf(file, message " in function \"%s\" in line %d\n", \
           __PRETTY_FUNCTION__, __LINE__)
+
+#define tracing(value)                    \
+  AddMessage(backtrace, nullpointer, 31); \
+  PrintTrace(backtrace);                  \
+  BackTracePop(backtrace);                \
+  PrintFunc;                              \
+  TRASE_RET(value);
 
 #define logfatal(error)                                              \
   printerror(errfile, RedText("!FATAL ERROR! ") MagentaText(error)); \
@@ -34,7 +77,7 @@
 #define printwarning(error) \
   printerror(stderr, BlueText(".WARNING. ") MagentaText(error));
 
-#define TRASE_RET(value)    \
+#define TRASE_RET(value)   \
   BackTracePop(backtrace); \
   return value
 
@@ -90,16 +133,13 @@ test \param test_case_name - group of test name \param test_name - name of test
 
 #define nullpointer "ASSERTION FAILED: NULL POINTER"
 #ifndef NDEBUG
-#define ASSERT_POINTER_NOT_NULL(ptr, value)   \
-  do {                                        \
-    if (ptr == nullptr) {                     \
-      printnonfatal(nullpointer);             \
-      lognonfatal(nullpointer);               \
-      AddMessage(backtrace, nullpointer, 31); \
-      PrintTrace(backtrace);                  \
-      BackTracePop(backtrace);\
-      TRASE_RET(value);                        \
-    }                                         \
+#define ASSERT_POINTER_NOT_NULL(ptr, value) \
+  do {                                      \
+    if (ptr == nullptr) {                   \
+      printnonfatal(nullpointer);           \
+      lognonfatal(nullpointer);             \
+      tracing(value);                       \
+    }                                       \
   } while (0)
 #else
 #define ASSERT_POINTER_NOT_NULL(...)
