@@ -12,39 +12,38 @@
 #define errfile stderr
 #endif
 
-#define PrintFunc                                           \
-  char filename[40] = "";                                   \
-  char funcname[40] = "";                                   \
-  size_t length;                                            \
-  strcat(filename, __FILE__);                               \
-  strcat(funcname, __func__);                               \
-                                                            \
-  FILE* sourcefile = fopen(filename, "r");                  \
-  char* func;                                               \
-  char* line = nullptr;                                     \
-  do {                                                      \
-    getline(&line, &length, sourcefile);                    \
-    func = strstr(line, funcname);                          \
-  } while (func == nullptr);                                \
-  char symbol##_FUNCION__;                                  \
-  int balance = 0;                                          \
-  for (int i = 0; line[i] != '\0'; ++i) {                   \
-    putchar(line[i]);                                       \
-    balance -= (line[i] == '}');                            \
-    balance += (line[i] == '{');                            \
-  }                                                         \
-  while ((symbol##_FUNCION__ = fgetc(sourcefile)) != '{') { \
-    putchar(symbol##_FUNCION__);                            \
-  }                                                         \
-  ++balance;                                                \
-  while (balance != 0) {                                    \
-    symbol##_FUNCION__ = fgetc(sourcefile);                 \
-    balance -= (symbol##_FUNCION__ == '}');                 \
-    balance += (symbol##_FUNCION__ == '{');                 \
-                                                            \
-    putchar(symbol##_FUNCION__);                            \
-  }                                                         \
-  putchar('\n');                                            \
+#define PrintFunc                           \
+  char filename[40] = "";                   \
+  char funcname[40] = "";                   \
+  size_t length;                            \
+  strcat(filename, __FILE__);               \
+  strcat(funcname, __func__);               \
+                                            \
+  FILE* sourcefile = fopen(filename, "r");  \
+  char* func;                               \
+  char* line = nullptr;                     \
+  do {                                      \
+    getline(&line, &length, sourcefile);    \
+    func = strstr(line, funcname);          \
+  } while (func == nullptr);                \
+                                            \
+  int open = 0;                             \
+  int close = 0;                            \
+                                            \
+  for (int i = 0; line[i] != '\0'; ++i) {   \
+    putchar(line[i]);                       \
+    open += (line[i] == '{');               \
+    close += (line[i] == '}');              \
+  }                                         \
+  free(line);                               \
+  char symbol##_FUNCION__;                  \
+  while ((open == 0) || (open != close)) {  \
+    symbol##_FUNCION__ = fgetc(sourcefile); \
+    open += (symbol##_FUNCION__ == '{');    \
+    close += (symbol##_FUNCION__ == '}');   \
+    putchar(symbol##_FUNCION__);            \
+  }                                         \
+  putchar('\n');                            \
   fclose(sourcefile)
 
 #define printerror(file, message)                           \
