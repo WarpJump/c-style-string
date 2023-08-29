@@ -22,13 +22,12 @@ void TestSTRSTR();
 void TestMyAsserts();
 
 #ifndef NDEBUG
-FILE *debugfile = fopen("logs.txt", "w"); //ааа я не знаю как его закрыть!!!!
+FILE *debugfile = fopen("logs.txt", "w");
 #endif
 BACKTRACE* backtrace;
 
 int main() {
   backtrace =  BackTraceConstruct();
-
 
   TestLength();
 

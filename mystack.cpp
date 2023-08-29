@@ -1,5 +1,5 @@
 #include "mystack.h"
-
+#include "colors.h"
 #include "assert.h"
 
 void MessageDestroy(Message* src) {
@@ -78,12 +78,20 @@ void StackDestroy(Mystack* src) {
 ///////////////////////////////////////////////////////////////////////////
 
 BACKTRACE* BackTraceConstruct() {
+  //creating dynamic struct BACKTRACE and its dynamic field 'stack'
   BACKTRACE* trace = reinterpret_cast<BACKTRACE*>(calloc(1, sizeof(BACKTRACE)));
   trace->stack = reinterpret_cast<Mystack*>(calloc(1, sizeof(Mystack)));
+  
+  //adding initial message "TRACEBACK: "
+  const size_t initialmess_size = sizeof(RedText("TRACEBACK: "));
+  AddMessage(trace, RedText("TRACEBACK: "), initialmess_size);
   return trace;
 }
 
 void BackTraceDestroy(BACKTRACE* src) {
+  //deleting initial message "TRACEBACK: "
+  BackTracePop(src);
+
   StackDestroy(src->stack);
   free(src);
 }
