@@ -2,10 +2,11 @@
 #include <stdio.h>
 
 #include "mystring.h"
-#include "myasserts.h"
+#include "mytracebacks/myasserts.h"
+#include "mytracebacks/mystack.h"
+
 #include "string.h"
 
-#include "mystack.h"
 
 /*!
 \file
@@ -25,6 +26,10 @@ void TestMyAsserts();
 FILE *debugfile = fopen("logs.txt", "w");
 #endif
 BACKTRACE* backtrace;
+
+/*!
+\brief Main function which runs tests
+*/
 
 int main() {
   backtrace =  BackTraceConstruct();

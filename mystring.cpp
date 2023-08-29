@@ -7,8 +7,9 @@
 */
 
 #include "mystring.h"
-#include "myasserts.h"
-#include "mystack.h"
+
+#include "mytracebacks/myasserts.h"
+#include "mytracebacks/mystack.h"
 
 
 #include <assert.h>
