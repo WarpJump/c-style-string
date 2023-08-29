@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "mystring.h"
+#include "myasserts.h"
 #include "string.h"
 
 #include "mystack.h"

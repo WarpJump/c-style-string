@@ -4,14 +4,6 @@
 
 // #define getname "FUNCTION" __FUNCTION__ "CALL CAUSED -> "
 
-#define TRACE                                 \
-  const char* funcname = __PRETTY_FUNCTION__; \
-  char funcmessage[50] = "FUNCTION ";         \
-  strcat(funcmessage, funcname);              \
-  strcat(funcmessage, " CALL CAUSED -> ");    \
-  AddMessage(backtrace, funcmessage, 50);     \
-  for (bool flag__ = true; flag__; BackTracePop(backtrace), flag__ = false)
-
 struct Message {
   char* stringlog;
 };

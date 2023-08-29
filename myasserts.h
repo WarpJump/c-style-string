@@ -12,47 +12,67 @@
 #define errfile stderr
 #endif
 
-#define PrintFunc                          \
-  char filename[40] = "";                  \
-  char funcname[40] = "";                  \
-  size_t length;                           \
-  strcat(filename, __FILE__);              \
-  strcat(funcname, __func__);              \
-                                           \
-  FILE* sourcefile = fopen(filename, "r"); \
-  char* func;                              \
-  char* line = nullptr;                    \
-  do {                                     \
-    getline(&line, &length, sourcefile);   \
-    func = strstr(line, funcname);         \
-  } while (func == nullptr);               \
-                                           \
-  int open = 0;                            \
-  int close = 0;                           \
-                                           \
-  for (int i = 0; line[i] != '\0'; ++i) {  \
-    putchar(line[i]);                      \
-    open += (line[i] == '{');              \
-    close += (line[i] == '}');             \
-  }                                        \
-  free(line);                              \
-  char symbol##_FUNCION__;                 \
-  while ((open == 0) || (open != close)) { \
-    int symbol = fgetc(sourcefile);        \
-    if (symbol == EOF) {                   \
-      break;                               \
-    }                                      \
-    symbol##_FUNCION__ = symbol % 255;     \
-    open += (symbol##_FUNCION__ == '{');   \
-    close += (symbol##_FUNCION__ == '}');  \
-    putchar(symbol##_FUNCION__);           \
-  }                                        \
-  putchar('\n');                           \
-  fclose(sourcefile)
+#define PrintFunc                                                        \
+  char filename[40] = "";                                                \
+  char funcname[40] = "";                                                \
+  size_t length;                                                         \
+  strcat(filename, __FILE__);                                            \
+  strcat(funcname, __func__);                                            \
+                                                                         \
+  FILE* sourcefile = fopen(filename, "r");                               \
+  if (sourcefile == nullptr) {                                           \
+    printf(                                                              \
+        RedText("Source file not found, unable to print source code of " \
+                "problematic file"));                                    \
+  } else {                                                               \
+    char* func;                                                          \
+    char* line = nullptr;                                                \
+    do {                                                                 \
+      getline(&line, &length, sourcefile);                               \
+      func = strstr(line, funcname);                                     \
+    } while (func == nullptr);                                           \
+                                                                         \
+    int open = 0;                                                        \
+    int close = 0;                                                       \
+                                                                         \
+    for (int i = 0; line[i] != '\0'; ++i) {                              \
+      putchar(line[i]);                                                  \
+      open += (line[i] == '{');                                          \
+      close += (line[i] == '}');                                         \
+    }                                                                    \
+    free(line);                                                          \
+    char symbol##_FUNCION__;                                             \
+                                                                         \
+    while ((open == 0) || (open != close)) {                             \
+      int symbol = fgetc(sourcefile);                                    \
+      if (symbol == EOF) {                                               \
+        break;                                                           \
+      }                                                                  \
+      symbol##_FUNCION__ = symbol;                                       \
+      open += (symbol##_FUNCION__ == '{');                               \
+      close += (symbol##_FUNCION__ == '}');                              \
+      putchar(symbol##_FUNCION__);                                       \
+    }                                                                    \
+    fclose(sourcefile);                                                  \
+  }                                                                      \
+  putchar('\n')
 
-#define printerror(file, message)                           \
-  fprintf(file, message " in function \"%s\" in line %d\n", \
-          __PRETTY_FUNCTION__, __LINE__)
+#define TRACE                                                              \
+  const char* funcname = __PRETTY_FUNCTION__;                              \
+  static const size_t length##__func__ = 30 + sizeof(__PRETTY_FUNCTION__); \
+  char funcmessage[length##__func__] = "CALL OF FUNCTION ";                \
+  strcat(funcmessage, funcname);                                           \
+  strcat(funcmessage, " CAUSED -> ");                                      \
+  AddMessage(backtrace, funcmessage, length##__func__);                    \
+  for (bool flag__ = true; flag__; BackTracePop(backtrace), flag__ = false)
+
+#define TRASE_RET(value)   \
+  BackTracePop(backtrace); \
+  return value
+
+#define printerror(file, message)                              \
+  fprintf(file, message " in function \"%s\" in file %s:%d\n", \
+          __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
 #define tracing(value)                    \
   AddMessage(backtrace, nullpointer, 31); \
@@ -79,10 +99,6 @@
 
 #define printwarning(error) \
   printerror(stderr, BlueText(".WARNING. ") MagentaText(error));
-
-#define TRASE_RET(value)   \
-  BackTracePop(backtrace); \
-  return value
 
 /*!
 \brief Exception controlling block.
