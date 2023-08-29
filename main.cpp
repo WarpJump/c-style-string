@@ -11,10 +11,49 @@
 \brief File with test functions for my c-string library
 */
 
+void TestLength();
+void TestCopy();
+void TestConcatenation();
+void TestFileRead();
+void TestDynamicCopy();
+void TestDynamicLine();
+void TestSTRSTR();
+void TestMyAsserts();
+
 #ifndef NDEBUG
 FILE *debugfile = fopen("logs.txt", "w"); //ааа я не знаю как его закрыть!!!!
 #endif
 BACKTRACE* backtrace;
+
+int main() {
+  backtrace =  BackTraceConstruct();
+
+
+  TestLength();
+
+  TestCopy();
+
+  TestConcatenation();
+
+  TestFileRead();
+
+  TestDynamicCopy();
+
+  TestDynamicLine();
+
+  TestSTRSTR();
+  TRACE {
+    TestMyAsserts();
+  }
+
+  printf("test ok\n");
+
+  BackTraceDestroy(backtrace);
+
+  #ifndef NDEBUG
+  fclose(debugfile);
+  #endif
+}
 
 void TestLength() {
   const char kExample1[8] = "amongus";  // will not be modified
@@ -44,7 +83,6 @@ void TestConcatenation() {
 
   char test3[20] = "red is not imposter";
   char ans3[20] = "red is not imposter";
-  const char kExample3[20] = "red is amongus";
   test3[7] = '\0';
   ans3[7] = '\0';
 
@@ -114,32 +152,3 @@ void TestSTRSTR() {
 
 void TestMyAsserts() { MyPuts(nullptr); }
 
-int main() { // TODO move upper
-  backtrace =  BackTraceConstruct();
-
-
-  TestLength();
-
-  TestCopy();
-
-  TestConcatenation();
-
-  TestFileRead();
-
-  TestDynamicCopy();
-
-  TestDynamicLine();
-
-  TestSTRSTR();
-  TRACE {
-    TestMyAsserts();
-  }
-
-  printf("test ok\n");
-
-  BackTraceDestroy(backtrace);
-
-  #ifndef NDEBUG
-  fclose(debugfile);
-  #endif
-}

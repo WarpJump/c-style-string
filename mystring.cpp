@@ -146,7 +146,7 @@ char *MyFgets(char *str, int count, FILE *stream) {
 char *MyStrdup(const char *src) {
   ASSERT_POINTER_NOT_NULL(src, nullptr);
 
-  const size_t kSize = MyStrlen(src);
+  const size_t kSize = MyStrlen(src) + 1; //previosly forgot to allocate space for terminating character
   ASSERT_ALLOCALION_SIZE_NOT_ZERO(kSize, nullptr);
   char *duplicate = reinterpret_cast<char *>(calloc(kSize, sizeof(char)));
   MyStrcpy(duplicate, src);
@@ -244,7 +244,7 @@ char *MyStrstr(const char *str, const char *substr) {
   }
 
   // highest digit of the number in base = kBase notation
-  for (int i = 1; i < length; ++i) {
+  for (size_t i = 1; i < length; ++i) {
     max_base *= kBase;
     max_base %= kPrimeNumber;
   }
@@ -253,7 +253,6 @@ char *MyStrstr(const char *str, const char *substr) {
 
   str_proposal += length;
 
-  int count = 0;
   while (*str_proposal != '\0') {
     if (str_hash == substr_hash) {
       if (CompareStrings(str_proposal - length, const_cast<char *>(substr),
@@ -273,7 +272,6 @@ char *MyStrstr(const char *str, const char *substr) {
       str_hash = (str_hash + *str_proposal) % kPrimeNumber;
     }
     ++str_proposal;
-    ++count;
   }
   return nullptr;
 }

@@ -16,9 +16,10 @@ struct Message {
   char* stringlog;
 };
 
-Message* MessageConstruct(char* mess, size_t size);
+Message* MessageConstruct(const char* mess, size_t size);
 
 void MessageDestroy(Message* src);
+
 
 struct Mystack {
   Message** logs;
@@ -26,9 +27,13 @@ struct Mystack {
   size_t pointer = 0;
 };
 
+Mystack* StackPush(Mystack* src, Message* mess);
+
+void StackPop(Mystack* src);
+
 Mystack* StackResize(Mystack* src, size_t new_size);
 
-Mystack* Push(Mystack* src, Message mess);
+Mystack* StackPush(Mystack* src, Message mess);
 
 void StackDestroy(Mystack* src);
 

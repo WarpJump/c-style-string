@@ -13,7 +13,6 @@ Message* MessageConstruct(const char* mess, size_t size) {
   assert(mess != nullptr);
   Message* dest = reinterpret_cast<Message*>(calloc(1, sizeof(Message)));
 
-  // TODO stringlog is leaking
   dest->stringlog = reinterpret_cast<char*>(calloc(size, sizeof(char)));
 
   assert(dest->stringlog != nullptr);
@@ -47,7 +46,7 @@ Mystack* StackResize(Mystack* src, size_t new_size) {
   src->size = new_size;
   return src;
 }
-Mystack* Push(Mystack* src, Message* mess) {
+Mystack* StackPush(Mystack* src, Message* mess) {
   if (src->pointer + 1 >= src->size) {
     StackResize(src, 2 * (src->size));
   }
@@ -69,7 +68,7 @@ void StackPop(Mystack* src) {
 }
 
 void StackDestroy(Mystack* src) {
-  for (int i = 0; i < (src->pointer); ++i) {
+  for (size_t i = 0; i < (src->pointer); ++i) {
     free(src->logs[i]);
   }
   free(src->logs);
@@ -92,7 +91,7 @@ void BackTraceDestroy(BACKTRACE* src) {
 BACKTRACE* AddMessage(BACKTRACE* src, const char* str, size_t size) {
   Message* mess = MessageConstruct(str, size);
 
-  Push(src->stack, mess);
+  StackPush(src->stack, mess);
 
   return src;
 }
@@ -103,7 +102,7 @@ BACKTRACE* BackTracePop(BACKTRACE* src) {
 }
 
 BACKTRACE* PrintTrace(BACKTRACE* src) {
-  for (int i = 0; i < (src->stack)->pointer; ++i) {
+  for (size_t i = 0; i < (src->stack)->pointer; ++i) {
     Message* mess = (src->stack)->logs[i];
     printf("%s ", mess->stringlog);
   }
